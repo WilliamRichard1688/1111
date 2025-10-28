@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Statement Calculator</title>
+    <style>
+        /* CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* New Professional Blue/White Theme */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f4f7f9; /* Light blue-grey background */
+            padding: 10px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto; /* Added top/bottom margin */
+            background: #ffffff; /* Crisp white container */
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); /* Softer shadow */
+            border: 1px solid #dee2e6; /* Subtle border */
+        }
+
+        h1 {
+            color: #004a99; /* Darker, corporate blue */
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #555; /* Darker grey for better readability */
+            margin-bottom: 25px;
+            font-size: 0.95em;
+        }
+
+        .section {
+            margin-bottom: 25px;
+            border: 1px solid #dee2e6; /* Cleaner border */
+            border-radius: 10px;
+            padding: 15px;
+            background: #ffffff; /* White section background */
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            color: #007bff; /* Primary professional blue */
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #007bff; /* Thinner, blue border */
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ccc; /* Standard border */
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #007bff; /* Blue border on focus */
+            box-shadow: none; /* MODIFIED: Removed focus ring */
+        }
+
+        .total-row {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #e0e0e0; /* Lighter top border */
+        }
+
+        .total-label {
+            display: block;
+            font-weight: 700;
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .total-value {
+            display: block;
+            font-weight: 700;
+            font-size: 1.4em;
+            color: #007bff; /* Blue for total */
+            padding: 14px;
+            background: #f8f9fa; /* Light grey background for emphasis */
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #dee2e6; /* Subtle border */
+        }
+
+        .summary {
+            background: #ffffff; /* MODIFIED: Solid white background */
+            color: #333; /* MODIFIED: Default dark text color */
+            padding: 20px;
+            border-radius: 10px; /* Matched radius */
+            margin-top: 25px;
+            border: 1px solid #dee2e6; /* MODIFIED: Added border */
+        }
+
+        .summary h2 {
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            text-align: center;
+            font-weight: 700;
+            color: #007bff; /* MODIFIED: Changed text color to blue */
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: #f8f9fa; /* MODIFIED: Light grey background */
+            border-radius: 8px;
+            font-size: 1em;
+            transition: background 0.2s;
+        }
+
+        .summary-item:hover {
+            background: #e9ecef; /* MODIFIED: Darker grey on hover */
+        }
+
+        .summary-item span:first-child {
+            flex: 1;
+            color: #444; /* MODIFIED: Dark grey text */
+        }
+
+        .summary-item span:last-child {
+            font-weight: 700;
+            text-align: right;
+            margin-left: 10px;
+        }
+
+        .summary-item.highlight {
+            background: #e6f2ff; /* MODIFIED: Light blue highlight */
+            font-size: 1.15em;
+            font-weight: 700;
+            padding: 15px;
+        }
+
+        .summary-item.highlight span:first-child {
+            color: #004a99; /* MODIFIED: Dark blue text */
+        }
+
+        /* Semantic colors for profit/loss */
+        .negative {
+            color: #ff6b6b !important; /* Kept for financial clarity */
+        }
+
+        .positive {
+            color: #51cf66 !important; /* Kept for financial clarity */
+        }
+
+        /* Responsive styles */
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .container {
+                padding: 40px;
+                margin: 40px auto;
+            }
+
+            h1 {
+                font-size: 2.5em;
+                margin-bottom: 10px;
+            }
+
+            .subtitle {
+                margin-bottom: 40px;
+                font-size: 1.1em;
+            }
+
+            .section {
+                padding: 25px;
+                margin-bottom: 35px;
+            }
+
+            .section-title {
+                font-size: 1.5em;
+                margin-bottom: 20px;
+            }
+
+            .input-group {
+                display: grid;
+                grid-template-columns: 1fr 300px;
+                gap: 20px;
+                align-items: center;
+            }
+
+            label {
+                margin-bottom: 0;
+                font-size: 1em;
+                text-align: left; /* Ensure labels are left-aligned */
+            }
+
+            input[type="number"] {
+                width: 300px;
+                justify-self: end; /* Align input to the right */
+            }
+
+            .total-row {
+                display: grid;
+                grid-template-columns: 1fr 300px;
+                gap: 20px;
+                align-items: center;
+                padding-top: 20px;
+            }
+
+            .total-label {
+                font-size: 1.2em;
+                margin-bottom: 0;
+                text-align: right; /* Align label to the right */
+                color: #333;
+            }
+
+            .total-value {
+                font-size: 1.3em;
+                text-align: right;
+                padding-right: 14px;
+            }
+
+            .summary {
+                padding: 30px;
+                margin-top: 40px;
+            }
+
+            .summary h2 {
+                font-size: 2em;
+                margin-bottom: 25px;
+            }
+
+            .summary-item {
+                font-size: 1.1em;
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .summary-item.highlight {
+                font-size: 1.3em;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .input-group {
+                grid-template-columns: 1fr 350px;
+            }
+
+            input[type="number"] {
+                width: 350px;
+            }
+
+            .total-row {
+                grid-template-columns: 1fr 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Financial Statement</h1>
+        <p class="subtitle">Enter your business financial data below</p>
+
+        <div class="section">
+            <h2 class="section-title">Revenue</h2>
+            <div class="input-group">
+                <label>Sales Revenue</label>
+                <input type="number" id="sales" value="50000" min="0" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Service Revenue</label>
+                <input type="number" id="service" value="25000" min="0" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Other Income</label>
+                <input type="number" id="otherIncome" value="2000" min="0" step="0.01">
+            </div>
+            <div class="total-row">
+                <span class="total-label">Total Revenue:</span>
+                <span class="total-value" id="totalRevenue">$0.00</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Cost of Goods Sold (COGS)</h2>
+            <div class="input-group">
+                <label>Materials/Inventory</label>
+                <input type="number" id="materials" value="15000" min="0" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Direct Labor</label>
+                <input type="number" id="directLabor" value="8000" min="0" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Manufacturing Overhead</label>
+                <input type="number" id="overhead" value="3000" min="0" step="0.01">
+            </div>
+            <div class="total-row">
+                <span class="total-label">Total COGS:</span>
+                <span class="total-value" id="totalCOGS">$0.00</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Operating Expenses</h2>
+            <div class="input-group">
+                <label>Salaries & Wages</label>
+                <input type="number" id="salaries" value="20000" min="0" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Rent</label>
+                <input type="number" id="rent" value="5000" min="0" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Utilities</label>
+                <input type="number" id="utilities" value="1500" min="0" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Marketing & Advertising</label>
+                <input type="number" id="marketing" value="3000" min="0" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Insurance</label>
+                <input type="number" id="insurance" value="1200" min="0" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Office Supplies</label>
+                <input type="number" id="supplies" value="800" min="0" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Other Expenses</label>
+                <input type="number" id="otherExpenses" value="2500" min="0" step="0.01">
+            </div>
+            <div class="total-row">
+                <span class="total-label">Total Operating Expenses:</span>
+                <span class="total-value" id="totalOpEx">$0.00</span>
+            </div>
+        </div>
+
+        <div class="summary">
+            <h2>Financial Summary</h2>
+            <div class="summary-item">
+                <span>Total Revenue:</span>
+                <span id="summaryRevenue">$0.00</span>
+            </div>
+            <div class="summary-item">
+                <span>Total COGS:</span>
+                <span id="summaryCOGS">$0.00</span>
+            </div>
+            <div class="summary-item">
+                <span>Gross Profit:</span>
+                <span id="grossProfit">$0.00</span>
+            </div>
+            <div class="summary-item">
+                <span>Operating Expenses:</span>
+                <span id="summaryOpEx">$0.00</span>
+            </div>
+            <div class="summary-item highlight">
+                <span>NET PROFIT/LOSS:</span>
+                <span id="netProfit">$0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatCurrency(value) {
+            return '$' + parseFloat(value).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function calculate() {
+            const sales = parseFloat(document.getElementById('sales').value) || 0;
+            const service = parseFloat(document.getElementById('service').value) || 0;
+            const otherIncome = parseFloat(document.getElementById('otherIncome').value) || 0;
+            const totalRevenue = sales + service + otherIncome;
+
+            const materials = parseFloat(document.getElementById('materials').value) || 0;
+            const directLabor = parseFloat(document.getElementById('directLabor').value) || 0;
+            const overhead = parseFloat(document.getElementById('overhead').value) || 0;
+            const totalCOGS = materials + directLabor + overhead;
+
+            const salaries = parseFloat(document.getElementById('salaries').value) || 0;
+            const rent = parseFloat(document.getElementById('rent').value) || 0;
+            const utilities = parseFloat(document.getElementById('utilities').value) || 0;
+            const marketing = parseFloat(document.getElementById('marketing').value) || 0;
+            const insurance = parseFloat(document.getElementById('insurance').value) || 0;
+            const supplies = parseFloat(document.getElementById('supplies').value) || 0;
+            const otherExpenses = parseFloat(document.getElementById('otherExpenses').value) || 0;
+            const totalOpEx = salaries + rent + utilities + marketing + insurance + supplies + otherExpenses;
+
+            const grossProfit = totalRevenue - totalCOGS;
+            const netProfit = grossProfit - totalOpEx;
+
+            document.getElementById('totalRevenue').textContent = formatCurrency(totalRevenue);
+            document.getElementById('totalCOGS').textContent = formatCurrency(totalCOGS);
+            document.getElementById('totalOpEx').textContent = formatCurrency(totalOpEx);
+
+            document.getElementById('summaryRevenue').textContent = formatCurrency(totalRevenue);
+            document.getElementById('summaryCOGS').textContent = formatCurrency(totalCOGS);
+            document.getElementById('grossProfit').textContent = formatCurrency(grossProfit);
+            document.getElementById('summaryOpEx').textContent = formatCurrency(totalOpEx);
+
+            const netProfitElement = document.getElementById('netProfit');
+            netProfitElement.textContent = formatCurrency(netProfit);
+
+            // Reset classes
+            netProfitElement.classList.remove('negative', 'positive');
+
+            if (netProfit < 0) {
+                netProfitElement.classList.add('negative');
+            } else if (netProfit > 0) {
+                netProfitElement.classList.add('positive');
+            } else {
+                // No class needed, will inherit default color
+            }
+        }
+
+        const inputs = document.querySelectorAll('input[type="number"]');
+        inputs.forEach(input => {
+            input.addEventListener('input', calculate);
+        });
+
+        // Initial calculation on page load
+        calculate();
+    </script>
+</body>
+</html>
